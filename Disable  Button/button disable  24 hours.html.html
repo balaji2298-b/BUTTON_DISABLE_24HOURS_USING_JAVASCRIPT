@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Enable After 24 Hours</title>
+    <style>
+        #myButton {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #disabledMessage {
+            display: none;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+   <center>
+       <button type="submit" id="myButton" onclick="startTimer()">Click Me</button>
+       <p id="disabledMessage">Please wait 24 hours before clicking again.</p>
+   </center>
+    
+    <script>
+        const button = document.getElementById('myButton');
+        const message = document.getElementById('disabledMessage');
+
+        // Check local storage to see if the button should be enabled
+        function checkButtonState() {
+            const lastClickTime = localStorage.getItem('lastClickTime');
+            if (lastClickTime) {
+                const elapsedTime = Date.now() - lastClickTime;
+                if (elapsedTime < 86400000) { // Less than 24 hours
+                    button.disabled = true;
+                    message.style.display = 'block';
+                } else {
+                    button.disabled = false;
+                    message.style.display = 'none';
+                }
+            }
+        }
+
+        function startTimer() {
+            // Disable the button and show a message
+            button.disabled = true;
+            message.style.display = 'block';
+
+            // Store the current time in local storage
+            localStorage.setItem('lastClickTime', Date.now());
+
+            // Set a timer to re-enable the button after 24 hours
+            setTimeout(() => {
+                button.disabled = false;
+                message.style.display = 'none';
+                localStorage.removeItem('lastClickTime'); // Clear the stored time
+            }, 86400000); // 24 hours in milliseconds
+        }
+
+        // Call the function to check the button state on page load
+        window.onload = checkButtonState;
+    </script>
+</body>
+</html>
